@@ -19,21 +19,20 @@ export default function Album() {
     fetcher,
     {
       revalidateOnMount: true,
-      initialData: [],
+      initialData: { image: [], name: '', artist: '', playcount: '', url: '', tracks: { track: [] } },
     }
   );
+
+  console.log(data);
 
   if (error) return <Alert variant="danger">Error fetching album details</Alert>;
   if (!data) return <Alert variant="info">Loading...</Alert>;
 
   const indexOfLastTrack = currentPage * tracksPerPage;
   const indexOfFirstTrack = indexOfLastTrack - tracksPerPage;
-  let currentTracks = [];
-  if (Array.isArray(data.tracks.track) && data.tracks.track.length > 0) {
-    currentTracks = data.tracks.track.slice(indexOfFirstTrack, indexOfLastTrack);
-  }
+  const currentTracks = (data.tracks && Array.isArray(data.tracks.track)) ? data.tracks.track.slice(indexOfFirstTrack, indexOfLastTrack) : [];
 
-  const totalPages = Math.ceil(data.tracks.track.length / tracksPerPage);
+  const totalPages = Math.ceil((data.tracks && Array.isArray(data.tracks.track)) ? data.tracks.track.length / tracksPerPage : 0);
 
   const handlePagination = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -43,21 +42,22 @@ export default function Album() {
     return playcount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-
   return (
     <div className="container mt-4 card-color">
       <div className="row p-3">
         <div className="col-md-3">
-          <img src={data.image[3]['#text']} alt="Album Cover" className="img-fluid" style={{ marginLeft: "-15px" }} />
+          {data.image.length > 0 && (
+            <img src={data.image[3]['#text']} alt="Album Cover" className="img-fluid" style={{ marginLeft: "-15px" }} />
+          )}
         </div>
         <div className="col-md-9">
           <h1>{data.name}</h1>
           <p>{data.artist}</p>
           <p>Playcount: {formatPlaycount(data.playcount)}</p>
-          <p><a href={data.url} target="_blank" rel="noopener noreferrer" >View the entire album on last.fm</a></p>
+          {data.url && <p><a href={data.url} target="_blank" rel="noopener noreferrer" >View the entire album on last.fm</a></p>}
         </div>
       </div>
-      {data.tracks.track.length > 1 && <h2>Tracklist:</h2>}
+      {currentTracks.length > 0 && <h2>Tracklist:</h2>}
       <div className="row">
         {currentTracks.map((track, index) => (
           <div key={index} className="col-md-6 px-0">
@@ -75,7 +75,7 @@ export default function Album() {
           </div>
         ))}
       </div>
-      {data.tracks.track.length > tracksPerPage && (
+      {totalPages > 1 && (
         <Pagination className="mt-4 py-3">
           {Array.from({ length: totalPages }, (_, i) => (
             <Pagination.Item

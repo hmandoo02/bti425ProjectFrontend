@@ -6,10 +6,11 @@ import { searchHistoryAtom } from '@/lib/store';
 import { useRouter } from 'next/router';
 
 export default function History() {
+  const router = useRouter();
+
   const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
 
   useEffect(() => {
     const fetchHistory = async () => {
