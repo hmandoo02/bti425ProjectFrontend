@@ -51,7 +51,7 @@ export default function Login(props){
               <Form.Label>Email address</Form.Label>
               <Form.Control type="text" value={user} name="userName" placeholder="Enter email" onChange={e => setUser(e.target.value)} />
               <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
+                We'll never share your information with anyone else.
               </Form.Text>
             </Form.Group>
 
