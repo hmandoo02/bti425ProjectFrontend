@@ -41,7 +41,7 @@ export default function Register(props) {
             <Form onSubmit={handleSubmit} style={{ width: '60%', margin: 'auto' }}>
               <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control type="text" value={user} id="userName" name="userName" placeholder="Enter email" onChange={e => setUser(e.target.value)} />
+                <Form.Control type="text" value={user} name="userName" placeholder="Enter email" onChange={e => setUser(e.target.value)} />
                 <Form.Text className="text-muted">
                   We'll never share your userName with anyone else.
                 </Form.Text>
@@ -49,11 +49,11 @@ export default function Register(props) {
 
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" value={password} id="password" name="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+                <Form.Control type="password" value={password} name="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
                 <Form.Label>Confirm Password</Form.Label>
-                <Form.Control type="password" value={password2} id="password2" name="password2" placeholder="Confirm Password" onChange={e => setPassword2(e.target.value)} />
+                <Form.Control type="password" value={password2} name="password2" placeholder="Confirm Password" onChange={e => setPassword2(e.target.value)} />
               </Form.Group>
               {warning && <>
                 <br />

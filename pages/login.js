@@ -1,9 +1,9 @@
 import { Card, Alert, Form, Button } from "react-bootstrap";
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { authenticateUser } from "@/lib/authenticate";
 import { useAtom } from 'jotai';
-// import { getFavourites, getHistory } from "@/lib/userData";
+import { getFavourites, getHistory } from "@/lib/userData";
 import { favouritesAtom, searchHistoryAtom } from "@/lib/store";
 
 export default function Login(props){
@@ -12,7 +12,7 @@ export default function Login(props){
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [, setFavouritesList] = useAtom(favouritesAtom);
-  const [, setSearchHistory] = useAtom(searchHistoryAtom); 
+  const [, setSearchHistory] = useAtom(searchHistoryAtom);
   const router = useRouter();
 
   const handleSignUpClick = () => {
@@ -24,7 +24,7 @@ export default function Login(props){
 
     try{
       await authenticateUser(user, password);
-      // await updateAtoms();
+      await updateAtoms();
       router.push("/favourites");
     }catch(err){
      setWarning(err.message);
@@ -33,8 +33,9 @@ export default function Login(props){
   }
 
   async function updateAtoms(){
-    setFavouritesList(await getFavourites());
-    setSearchHistory(await getHistory());
+    setFavouritesList(await getFavourites({ userName: user }));
+    setSearchHistory(await getHistory({ userName: user }));
+    localStorage.setItem('userName', user);
   }
 
   return (
@@ -48,7 +49,7 @@ export default function Login(props){
           <Form onSubmit={handleSubmit} style={{width:'60%', margin:'auto'}}>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Email address</Form.Label>
-              <Form.Control type="text" value={user} id="userName"  name="userName" placeholder="Enter email" onChange={e => setUser(e.target.value)} />
+              <Form.Control type="text" value={user} name="userName" placeholder="Enter email" onChange={e => setUser(e.target.value)} />
               <Form.Text className="text-muted">
                 We'll never share your email with anyone else.
               </Form.Text>
@@ -56,7 +57,7 @@ export default function Login(props){
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" value={password} id="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+              <Form.Control type="password" value={password} placeholder="Password" onChange={e => setPassword(e.target.value)} />
             </Form.Group>
             {warning && <>
               <br />

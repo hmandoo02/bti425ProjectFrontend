@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Logout from './logout';
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const Layout = ({ children }) => {
   return (
     <>
       <Head>
-        <title>MusicHub</title>
+        <title>RapReel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/pulse/bootstrap.min.css" rel="stylesheet" />
       </Head>
@@ -80,13 +81,13 @@ const Layout = ({ children }) => {
 
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <a className="navbar-brand" href=" ">MusicHub ♪</a>
+          <a className="navbar-brand">RapReel ♪</a>
           <div className="collapse navbar-collapse" id="navbarNav">
             {renderMenuItems()}
             {!isRegisterOrLogin() && (
               <ul className="navbar-nav">
                 <li className="nav-item">
-                  <a className="nav-link" href="/logout">Logout</a>
+                  <Logout />
                 </li>
               </ul>
             )}
