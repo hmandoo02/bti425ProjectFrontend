@@ -69,7 +69,7 @@ export default function Favourites() {
       if (album.name == "?") {
         router.push(`/tentacion`);
       } else {
-        router.push(`/album/${encodeURIComponent(album.artist.name)}/${encodeURIComponent(album.name)}`);
+        router.push(`/album/${encodeURIComponent(item.artist)}/${encodeURIComponent(item.title)}`);
       }
     } catch (error) {
       console.error('Error adding album to history:', error);
