@@ -1,4 +1,4 @@
-import { Card, Alert, Pagination, Button } from "react-bootstrap";
+import { Card, Alert, Pagination, Button, Form } from "react-bootstrap";
 import { getToken } from "@/lib/authenticate";
 import useSWR from 'swr';
 import { useState, useEffect } from 'react';
@@ -6,7 +6,6 @@ import { useAtom } from 'jotai';
 import { getFavourites, addHistory, addFavourites } from '@/lib/userData';
 import { favouritesAtom, searchHistoryAtom } from "@/lib/store";
 import { useRouter } from 'next/router';
-
 
 const fetcher = (url) => fetch(url, { headers: { Authorization: `JWT ${getToken()}` }}).then((res) => res.json());
 
@@ -19,8 +18,10 @@ export default function Music() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [, setFavouritesList] = useAtom(favouritesAtom);
-  const [, setSearchHistory] = useAtom(searchHistoryAtom); 
+  const [, setSearchHistory] = useAtom(searchHistoryAtom);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
   const user = localStorage.getItem('userName');
 
   useEffect(() => {
@@ -32,14 +33,26 @@ export default function Music() {
     }
   }, [errorMsg]);
 
+  useEffect(() => {
+    if (data && searchTerm) {
+      const filtered = data.filter(album => {
+        return album.name.toLowerCase().includes(searchTerm.toLowerCase()) || album.artist.name.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+      setFilteredData(filtered);
+      setCurrentPage(1);
+    } else {
+      setFilteredData([]);
+    }
+  }, [data, searchTerm]);
+
   if (error) return <Alert variant="danger">Error fetching data</Alert>;
   if (!data) return <Alert variant="info">Loading...</Alert>;
 
   const albumsPerPage = 9;
+  const albumsToPaginate = searchTerm ? filteredData : data;
   const indexOfLastAlbum = currentPage * albumsPerPage;
   const indexOfFirstAlbum = indexOfLastAlbum - albumsPerPage;
-  const currentAlbums = data.slice(indexOfFirstAlbum, indexOfLastAlbum);
-  
+  const currentAlbums = albumsToPaginate.slice(indexOfFirstAlbum, indexOfLastAlbum);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -54,11 +67,7 @@ export default function Music() {
         }
       };
       setSearchHistory(await addHistory(userData));
-      if (album.name == "?") {
-        router.push(`/tentacion`);
-      } else {
-        router.push(`/album/${encodeURIComponent(album.artist.name)}/${encodeURIComponent(album.name)}`);
-      }
+      router.push(`/album/${encodeURIComponent(album.artist.name)}/${encodeURIComponent(album.name)}`);
     } catch (error) {
       console.error('Error adding album to history:', error);
     }
@@ -95,6 +104,9 @@ export default function Music() {
   return (
     <div className="container mt-4">
       {errorMsg && <Alert variant="danger">{errorMsg}</Alert>}
+      <Form.Group className="py-3" controlId="formSearch">
+        <Form.Control type="text" placeholder="Search albums..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
+      </Form.Group>
       <div className="row">
         {currentAlbums.map((album, index) => (
           <div key={index} className="col-md-4 mb-4">
@@ -110,7 +122,7 @@ export default function Music() {
         ))}
       </div>
       <Pagination className="mt-4">
-        {Array.from({ length: Math.ceil(data.length / albumsPerPage) }, (_, i) => (
+        {Array.from({ length: Math.ceil(albumsToPaginate.length / albumsPerPage) }, (_, i) => (
           <Pagination.Item key={i + 1} activeLabel="" active={i + 1 === currentPage} onClick={() => paginate(i + 1)}>
             {i + 1}
           </Pagination.Item>
