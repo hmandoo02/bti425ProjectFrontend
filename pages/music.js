@@ -67,7 +67,11 @@ export default function Music() {
         }
       };
       setSearchHistory(await addHistory(userData));
-      router.push(`/album/${encodeURIComponent(album.artist.name)}/${encodeURIComponent(album.name)}`);
+      if (album.name == "?") {
+        router.push(`/tentacion`);
+      } else {
+        router.push(`/album/${encodeURIComponent(album.artist.name)}/${encodeURIComponent(album.name)}`);
+      }
     } catch (error) {
       console.error('Error adding album to history:', error);
     }

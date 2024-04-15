@@ -66,7 +66,11 @@ export default function Favourites() {
         }
       };
       setSearchHistory(await addHistory(userData));
-      router.push(`/album/${encodeURIComponent(item.artist)}/${encodeURIComponent(item.title)}`);
+      if (item.title == "?") {
+        router.push(`/tentacion`);
+      } else {
+        router.push(`/album/${encodeURIComponent(item.artist)}/${encodeURIComponent(item.title)}`);
+      }
     } catch (error) {
       console.error('Error adding album to history:', error);
     }
