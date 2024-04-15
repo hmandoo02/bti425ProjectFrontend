@@ -66,7 +66,7 @@ export default function Favourites() {
         }
       };
       setSearchHistory(await addHistory(userData));
-      if (album.name == "?") {
+      if (item.title == "?") {
         router.push(`/tentacion`);
       } else {
         router.push(`/album/${encodeURIComponent(item.artist)}/${encodeURIComponent(item.title)}`);
