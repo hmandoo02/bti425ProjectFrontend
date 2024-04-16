@@ -101,6 +101,7 @@ export default function Music() {
       setFavouritesList(await addFavourites(userData));
     } catch (error) {
       console.error('Error adding album to favourites:', error);
+      alert(error.message);
       setErrorMsg(error.message);
     }
   };
